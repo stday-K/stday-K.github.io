@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+
+<head>
+  <meta name="generator" content="Hexo 5.4.2">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.14.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  <link rel='dns-prefetch' href='https://fastly.jsdelivr.net'>
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin>
+  <link rel='dns-prefetch' href='//unpkg.com'>
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>docker部署题 - stday-K</title>
+
+  
+    <meta name="description" content="前言：学习docker更多可见docker教程，这里仅仅是docker使用的一点记录  docker直接部署 docker search   从Docker Hub查找镜像 语法 docker search [OPTIONS] TERM OPTIONS说明：  --automated : 只列出 automated build类型的镜像；   --no-trunc : 显示完整的镜像描述；">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker部署题">
+<meta property="og:url" content="http://example.com/2022/12/04/docker%E9%83%A8%E7%BD%B2%E9%A2%98/index.html">
+<meta property="og:site_name" content="stday-K">
+<meta property="og:description" content="前言：学习docker更多可见docker教程，这里仅仅是docker使用的一点记录  docker直接部署 docker search   从Docker Hub查找镜像 语法 docker search [OPTIONS] TERM OPTIONS说明：  --automated : 只列出 automated build类型的镜像；   --no-trunc : 显示完整的镜像描述；">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://stday-123.oss-cn-hangzhou.aliyuncs.com/image-20221204232358340.png">
+<meta property="og:image" content="https://stday-123.oss-cn-hangzhou.aliyuncs.com/image-20221205164130494.png">
+<meta property="og:image" content="https://stday-123.oss-cn-hangzhou.aliyuncs.com/image-20221205165346170.png">
+<meta property="article:published_time" content="2022-12-04T23:06:58.000Z">
+<meta property="article:modified_time" content="2022-12-18T13:13:15.487Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="docker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://stday-123.oss-cn-hangzhou.aliyuncs.com/image-20221204232358340.png">
+  
+  
+
+  <!-- feed -->
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="http://www.stdaybook.top/wp-content/uploads/2022/04/image-20220410182341271.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class='l_body' id='start'>
+    <aside class='l_left' layout='post'>
+    
+
+  
+
+<header class="header">
+
+<div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.2/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="https://avatars.githubusercontent.com/u/73050721?s=40&v=4" onerror="javascript:this.classList.add('error');this.src='https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">stday-K</div></a></div>
+
+
+<nav class="menu dis-select"></nav>
+</header>
+
+
+<div class="widgets">
+
+<div class="widget-wrap single" id="toc"><div class="widget-header cap dis-select"><span class="name">docker部署题</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#docker%E7%9B%B4%E6%8E%A5%E9%83%A8%E7%BD%B2"><span class="toc-text">docker直接部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87dockerfile%E6%9D%A5%E9%83%A8%E7%BD%B2"><span class="toc-text">通过dockerfile来部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Dockerfile%E4%BB%8B%E7%BB%8D"><span class="toc-text">Dockerfile介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F%E5%9F%BA%E6%9C%AC%E6%AD%A5%E9%AA%A4"><span class="toc-text">构建镜像基本步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dockerfile%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4"><span class="toc-text">Dockerfile基础命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E8%B7%B5"><span class="toc-text">实践</span></a></li></ol></li></ol></div></div></div>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class='l_main'>
+      
+
+      
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a></div><div id="post-meta">发布于&nbsp;<time datetime="2022-12-04T23:06:58.000Z">2022-12-04</time></div></div>
+
+<article class='content md post'>
+<h1 class="article-title"><span>docker部署题</span></h1>
+<blockquote>
+<p>  前言：学习docker更多可见<a target="_blank" rel="noopener" href="https://www.runoob.com/docker/">docker教程</a>，这里仅仅是docker使用的一点记录</p>
+</blockquote>
+<h2 id="docker直接部署"><a href="#docker直接部署" class="headerlink" title="docker直接部署"></a>docker直接部署</h2><ul>
+<li><p><strong>docker search</strong>   从Docker Hub查找镜像</p>
+<p><strong>语法</strong></p>
+<p><code>docker search [OPTIONS] TERM</code></p>
+<p>OPTIONS说明：</p>
+<ul>
+<li><code>--automated :</code> 只列出 automated build类型的镜像；</li>
+</ul>
+<ul>
+<li><p><code>--no-trunc :</code> 显示完整的镜像描述；</p>
+</li>
+<li><p><code>-f &lt;过滤条件&gt;:</code> 列出收藏数不小于指定值的镜像。</p>
+</li>
+</ul>
+<p><strong>实例</strong></p>
+<p>从 Docker Hub 查找所有镜像名包含 java，并且收藏数大于 10 的镜像</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://stday-123.oss-cn-hangzhou.aliyuncs.com/image-20221204232358340.png" alt="image-20221204232358340"></p>
+<p>参数说明：</p>
+<p><strong>NAME:</strong> 镜像仓库源的名称</p>
+<p><strong>DESCRIPTION:</strong> 镜像的描述</p>
+<p><strong>OFFICIAL:</strong> 是否 docker 官方发布</p>
+<p><strong>stars:</strong> 类似 Github 里面的 star，表示点赞、喜欢的意思。</p>
+<p><strong>AUTOMATED:</strong> 自动构建。</p>
+</li>
+<li><p><strong>docker pull mattrayner&#x2F;lamp</strong>   获取查找lamp的镜像</p>
+<p>到docker hub的官网去搜索mattrayner&#x2F;lamp这个镜像,可以查看到他的具体使用说明及tag</p>
+<blockquote>
+<p>  <a target="_blank" rel="noopener" href="https://hub.docker.com/">https://hub.docker.com/</a></p>
+</blockquote>
+</li>
+<li><p><strong>docker run -d -p 10000:80 -p 13307:3306 mattrayner&#x2F;lamp</strong>   启动容器</p>
+<p>会返回容器的<code>container id</code></p>
+<p>访问<code>127.0.0.1:1000</code></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://stday-123.oss-cn-hangzhou.aliyuncs.com/image-20221205164130494.png" alt="成功"></p>
+<p>如果一直在等待，可以通过通过重建 <code>docker0</code> 网络解决问题</p>
+<p>取自： <a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000019701533">通过重建 docker0 网络解决问题</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">service docker stop</span><br><span class="line">pkill docker</span><br><span class="line">iptables -t nat -F</span><br><span class="line">ifconfig docker0 down</span><br><span class="line">brctl delbr docker0</span><br><span class="line">service docker start</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>部署题目</strong></p>
+<ul>
+<li><p>利用<code>cp</code>指令，将主机的数据拷贝到容器中的对应目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#docker cp [本地路径] [container id(不用全输入，只要和其他不冲突即可)]:[container 路径]</span></span><br><span class="line">docker <span class="built_in">cp</span> /root/test/ 41943b7e:var/www/html</span><br></pre></td></tr></table></figure>
+
+<p>拷贝后的目录结构</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://stday-123.oss-cn-hangzhou.aliyuncs.com/image-20221205165346170.png" alt="image-20221205165346170"></p>
+</li>
+<li><p>进入docker容器中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#docker exec -it [container id] /bin/bash</span></span><br><span class="line">docker <span class="built_in">exec</span> -it 41943b7e /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>在容器中部署相应的环境，如数据库等</p>
+</li>
+</ul>
+</li>
+<li><p><strong>导出容器</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker export 41943b7e &gt; Find.tar</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>导入容器</strong></p>
+<p>导出后使用tar</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#docker import Find.tar [自定义镜像名]:[tag]</span></span><br><span class="line">docker import Find.tar <span class="built_in">test</span>:1</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="通过dockerfile来部署"><a href="#通过dockerfile来部署" class="headerlink" title="通过dockerfile来部署"></a>通过dockerfile来部署</h2><blockquote>
+<p>  和直接部署相同，只不过是查找镜像后利用<code>dockerfile</code>文件，来获取镜像和自动化执行环境部署的操作</p>
+</blockquote>
+<h3 id="Dockerfile介绍"><a href="#Dockerfile介绍" class="headerlink" title="Dockerfile介绍"></a>Dockerfile介绍</h3><p>​    Dockerfile是一种能够被<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=Docker&spm=1001.2101.3001.7020">Docker</a>程序解释的剧本。Dockerfile由一条一条的指令组成，并且有自己的书写格式和支持的命令。当我们需要在容器镜像中指定自己额外的需求时，只需在Dockerfile上添加或修改指令，然后通过docker build生成我们自定义的容器镜像（image）。</p>
+<h3 id="构建镜像基本步骤"><a href="#构建镜像基本步骤" class="headerlink" title="构建镜像基本步骤"></a>构建镜像基本步骤</h3><blockquote>
+<p>  1.创建一个目录</p>
+<p>  2.在目录中创建Dockerfile文件以及其他文件</p>
+<p>  3.使用docker build 命令构建镜像</p>
+<p>  4.利用构建好的镜像启动容器</p>
+</blockquote>
+<h3 id="Dockerfile基础命令"><a href="#Dockerfile基础命令" class="headerlink" title="Dockerfile基础命令"></a>Dockerfile基础命令</h3><p>docker详解可见<a target="_blank" rel="noopener" href="https://www.runoob.com/docker/docker-dockerfile.html">Docker <em>Dockerfile</em> | 菜鸟教程</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/builder/">Dockerfile 參考|码头工人文档</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">FROM        构建新镜像基于的基础镜像 </span><br><span class="line">LABEL       标签</span><br><span class="line">RUN         构建镜像时运行的Shell命令              </span><br><span class="line">COPY        拷贝文件或目录到镜像中               </span><br><span class="line">ADD         解压压缩包并拷贝                  </span><br><span class="line">ENV         设置环境变量                    </span><br><span class="line">USER        为RUN、CMD和ENTRYPOINT执行命令指定运行用户     </span><br><span class="line">EXPOSE      声明容器运行的服务端口               </span><br><span class="line">WORKDIR     为RUN、CMD、ENTRYPOINT、COPY和ADD设置工作目录   </span><br><span class="line">CMD         运行容器时默认执行，如果有多个CMD指令，最后一个生效 </span><br></pre></td></tr></table></figure>
+
+<h3 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h3><ul>
+<li><p><strong>从Docker Hub查找镜像</strong></p>
+</li>
+<li><p><strong>查看对应镜像的具体使用说明及tag</strong></p>
+<blockquote>
+<p>  <a target="_blank" rel="noopener" href="https://hub.docker.com/">https://hub.docker.com/</a></p>
+</blockquote>
+<p>从官网得知道</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FROM mattrayner/lamp:latest-1804</span><br><span class="line"></span><br><span class="line"># Your custom commands</span><br><span class="line"></span><br><span class="line">CMD [&quot;/run.sh&quot;]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>以<code>mattrayner/lamp</code>为例</p>
+<p>文件结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">--test</span><br><span class="line">   |--dockerfile</span><br><span class="line">   |--www</span><br><span class="line">       |-index.php #RUN rm -rf在这docker无法删除文件，但可以覆盖，应该是初始化.sh的问题</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#dockerfile</span></span><br><span class="line"><span class="keyword">FROM</span> mattrayner/lamp:latest-<span class="number">1804</span> <span class="comment">#获取容器</span></span><br><span class="line"><span class="keyword">ADD</span><span class="language-bash"> ./test /var/www/html  <span class="comment">#将本地文件拷贝入容器</span></span></span><br></pre></td></tr></table></figure>
+
+<p>好懒，更多见<a target="_blank" rel="noopener" href="https://www.mrkaixin.top/posts/ace025e8/">如何用dockerfile给ctfd平台灌题 - Mrkaixin</a></p>
+</li>
+</ul>
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a>许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/2022/12/07/%E6%8F%90%E6%9D%83%E6%80%9D%E8%B7%AF/">提权思路</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/2022/11/12/github-actions%E5%AD%A6%E4%B9%A0/">github_actions学习</a></div></section></div>
+
+
+
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 stday-K 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class='float-panel mobile-only blur' style='display:none'>
+  <button type='button' class='sidebar-toggle mobile' onclick='sidebar.toggle()'>
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"></path><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"></path></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class='scripts'>
+    <script type="text/javascript">
+  stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.14.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.14.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://fastly.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js'
+  };
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://fastly.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@6/swiper-bundle.min.css","js":"https://unpkg.com/swiper@6/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://fastly.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://fastly.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://fastly.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://fastly.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://fastly.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti/umd/heti.min.css","js":"https://unpkg.com/heti/umd/heti-addon.min.js"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>
